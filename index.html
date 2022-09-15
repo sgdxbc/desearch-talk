@@ -1,40 +1,342 @@
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<link rel="stylesheet" href="dist/reset.css">
-		<link rel="stylesheet" href="dist/reveal.css">
-		<link rel="stylesheet" href="dist/theme/black.css">
+	<title>reveal.js</title>
 
-		<!-- Theme used for syntax highlighted code -->
-		<link rel="stylesheet" href="plugin/highlight/monokai.css">
-	</head>
-	<body>
-		<div class="reveal">
-			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
-			</div>
+	<link rel="stylesheet" href="dist/reset.css">
+	<link rel="stylesheet" href="dist/reveal.css">
+	<link rel="stylesheet" href="dist/theme/black.css">
+
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="plugin/highlight/monokai.css">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;700&family=Fira+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+		:root {
+			--r-main-font: "Fira Sans";
+			--r-code-font: "Fira Mono";
+		}
+	</style>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<div>
+					Bringing Decentralized Search to Decentralized Services
+				</div>
+				<div>(Code name: ${\rm D {\small E}S {\small EARCH}}$)</div>
+			</section>
+			<section>
+				<div class="r-fit-text">Problem definition: search engine</div>
+				<div style="font-size: 0.9em;">
+					<ul>
+						<li>...but not Google</li>
+						<li>Assumption: dataset being searched is single-sourced, publicly accessible and auditable,
+							e.g. (i.e. in this paper), it is hosted on blockchain, and the hash of whole
+							dataset is available</li>
+						<li>A search engine more like (and be compared to) ElasticSearch, which is also useful in many
+							cases<ul>
+								<li>Decentralized Twitter (Steemit)</li>
+								<li>Decentralized Amazon (OpenBazaar)</li>
+							</ul>
+						</li>
+						<li>Crawl dataset, generate indices, react to query</li>
+					</ul>
+				</div>
+			</section>
+			<section>
+				<div class="r-fit-text">Problem definition: <bold>decentralized</bold><small>(pronounced as
+						FREEDOM)</small></div>
+				<div class="r-fit-text">&#x2714 Decentralized (in 2022 a.k.a. blockchain) is the future</div>
+				<div class="r-fit-text">&#x2718 Decentralized world does not have a searching tool</div>
+				<div class="fragment">
+					Propose a searching service that: <ul class="fragment">
+						<li>Run by cooperative, weak, <strike>unreliable</strike>, possibly short-lived
+							<em>executors</em> with
+							limited resources <ul class="fragment">
+								<li>Not covered: incentive, (real) fault tolerance</li>
+								<li>Basically workload-dividing is well discussed, but no detail about
+									distribution/scheduling</li>
+							</ul>
+						</li>
+						<li>Search result is verifiable by everyone</li>
+					</ul>
+				</div>
+				<div></div>
+			</section>
+			<section>
+				<div class="r-fit-text">Background: searching from scratch</div>
+				<div class="r-stack">
+					<div class="fragment" data-fragment-index="0">
+						<div class="r-frame">
+							<div>Artificial intelligence</div>
+							<div style="font-size: 0.5em">Artificial <span class="fragment highlight-red"
+									data-fragment-index="1">intelligence</span> (AI) is intelligence
+								demonstrated by
+								<span class="fragment highlight-green" data-fragment-index="1">machines</span>,
+								as opposed to the natural intelligence displayed by animals including humans. ...
+							</div>
+						</div>
+						<div class="r-frame">
+							<div>Machine learning</div>
+							<div style="font-size: 0.5em"><span class="fragment highlight-green"
+									data-fragment-index="1">Machine</span> learning
+								(ML) is a field of inquiry devoted to
+								<span class="fragment highlight-blue" data-fragment-index="1">understanding</span>
+								and building methods that 'learn', that is, methods that leverage data to improve
+								performance on
+								some set of tasks.[1] ...
+							</div>
+						</div>
+						<div class="r-frame">
+							<div>Computer vision</div>
+							<div style="font-size: 0.5em">Computer vision is an interdisciplinary scientific field that
+								deals
+								with how computers can gain high-level <span class="fragment highlight-blue"
+									data-fragment-index="1">understanding</span> from digital images or videos.
+								From
+								the
+								perspective of engineering, it seeks to understand and automate tasks that the human
+								visual
+								system can do.[1][2] ...
+							</div>
+						</div>
+						<div class="r-frame">
+							<div>Deep learning</div>
+							<div style="font-size: 0.5em">...</div>
+						</div>
+					</div>
+					<div class="r-frame fragment" style="background: gray; width: 90%;">
+						<div>Inverted index</div>
+						<pre><code data-trim class="language-text">
+						"intelligence" => AI, ... 
+						"machine" => AI, ML, ...
+						"understand" => ML, CV, ...
+						"visual" => CV, ...
+						"learn" => ... (every article contains "learn")
+						(every word in AI | ML | CV | DL | ...) => ...
+					</code></pre>
+					</div>
+				</div>
+			</section>
+			<section>
+				<div class="r-fit-text">Background: searching from scratch</div>
+				<div class="r-frame" style="background: gray;">
+					<div>Inverted index</div>
+					<pre><code data-trim class="language-text">
+						"intelligence" => AI, ... 
+						"machine" => AI, ML, ...
+						"understand" => ML, CV, ...
+						"visual" => CV, ...
+						"learn" => ... (every article contains "learn")
+						(every word in AI | ML | CV | DL | ...) => ...
+					</code></pre>
+				</div>
+				<div class="r-frame">
+					<div>Q: intelligence</div>
+					<div>A: AI, ...</div>
+				</div>
+				<div class="r-frame">
+					<div>Q: machine | visual</div>
+					<div>A: AI, ML, CV, ...</div>
+				</div>
+			</section>
+			<section>
+				<div class="r-fit-text">Verifiable searching</div>
+				<ul style="font-size: 0.8em">
+					<li>How to verify a remotely-executed whitebox: <br> result = <code>Search</code>(dataset, query)
+						<ul>
+							<li>How to verify <code>fib(100)</code></li>
+						</ul>
+					</li>
+					<li>Result is trustable as long as: <ul>
+							<li>Dataset is trustable, which is already assumed</li>
+							<li>Execution is trustable: how to prove correct <code>Search</code> program is executed
+							</li>
+						</ul>
+					</li>
+					<li>Replication approach: trust majority of identify/power of executing correctly
+						<ul>
+							<li>Not used because it is not scalable</li>
+						</ul>
+					</li>
+					<li>Instead delegate whole responsibility to the new technology: trusted execution environment</li>
+				</ul>
+			</section>
+			<section data-auto-animate>
+				<div data-id="title" class="r-fit-text">Background: trusted execution environment</div>
+				<ul style="font-size: 0.8em">
+					<li>Endorsement key: RSA key pair created randomly on the chip at manufacture time <ul>
+							<li>Private key never leaves the chip, cannot be changed</li>
+							<li>Signing execution result with the key is a proof of execution happened on the chip</li>
+							<li>Remote attestion: everyone who has the public key (with according CA) can verify the
+								signature
+							</li>
+							<li>Trusted platform module: fixed-function chip</li>
+							<li>Trusted execution environment: programmmable chip with memory + trusted OS running on it
+							</li>
+							<li>What if chip's data/program is tampered?</li>
+						</ul>
+					<li>Hardware isolation prevents any modification from outside <ul>
+							<li>Trusted application is signed and trusted OS verify it before loading into TEE</li>
+							<li>Trusted OS is loaded by ROM</li>
+						</ul>
+					</li>
+					<li>Signed execution result is trusted to be correct if you trust: <ul>
+							<li>No one (including manufactor) knows the private key</li>
+							<li>The chip is manufactured correctly so <ul>
+									<li>Initialize TEE correctly with trusted OS image</li>
+									<li> Only code already running in TEE can modify its
+										memory</li>
+								</ul>
+							</li>
+							<li>Trusted OS only load verified correct version of application</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section data-auto-animate>
+				<div data-id="title" class="r-fit-text">Background: trusted execution environment</div>
+				<ul style="font-size: 0.8em; margin-top: -40%">
+					<li>Endorsement key: RSA key pair created randomly on the chip at manufacture time <ul>
+							<li>Private key never leaves the chip, cannot be changed</li>
+							<li>Signing execution result with the key is a proof of execution happened on the chip</li>
+							<li>Remote attestion: everyone who has the public key (with according CA) can verify the
+								signature
+							</li>
+							<li>Trusted platform module: fixed-function chip</li>
+							<li>Trusted execution environment: programmmable chip with memory + trusted OS running on it
+							</li>
+							<li>What if chip's data/program is tampered?</li>
+						</ul>
+					<li>Hardware isolation prevents any modification from outside <ul>
+							<li>Trusted application is signed and trusted OS verify it before loading into TEE</li>
+							<li>Trusted OS is loaded by ROM</li>
+						</ul>
+					</li>
+					<li>Signed execution result is trusted to be correct if you trust: <ul>
+							<li>No one (including manufactor) knows the private key</li>
+							<li>The chip is manufactured correctly so <ul>
+									<li>Initialize TEE correctly with trusted OS image</li>
+									<li> Only code already running in TEE can modify its
+										memory</li>
+								</ul>
+							</li>
+							<li>Trusted OS only load verified correct version of application</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section style="font-size: 0.7em">
+				<div style="font-size: 2em">TEE in practice</div>
+				<ul>
+					<li>
+						What if another trusted application is executed?
+					</li>
+					<li>What if input is tampered even before reaching TEE?</li>
+				</ul>
+				<img src="vl.png">
+				<div>
+					<ul>
+						<li>Another layer of isolation and trace IO </li>
+						<li>Decouple signing and execution</li>
+						<li>Cover everything by signature, called
+							<em>witness</em>
+						</li>
+				</div>
+				<img src="wit.png">
+			</section>
+			<section>
+				<div class="r-fit-text">How to build a decentralized seraching system</div>
+				<div>
+					<ul>
+						<li>Nodes have limited resources: divide task into 3 stages with sharding (discuss shortly)</li>
+						<li>Nodes may be short-lived: stateless tasks & a (centralized) untrusted storage</li>
+						<li>Nodes may be evil: verify result is calculated by verified program with verified input <ul>
+								<li>Client may delegate verification to executors (and trust them)</li>
+							</ul>
+						</li>
+						<li>Some other engineering to ensure user privacy, omitted in this talk</li>
+					</ul>
+				</div>
+			</section>
+			<section>
+				<div class="r-fit-text">Engineering:<br> N * search = 1 * (crawl + index) + N * query</div>
+				<div class="r-stack">
+					<img src="arch.png">
+					<img src="wt.png" class="fragment">
+				</div>
+			</section>
+			<section>
+				<div class="r-fit-text">Enginnering: Masters and Kanban</div>
+				<ul style="font-size: 0.75em">
+					<li>Masters: A group of executors, the decentralized central role
+						<ul>
+							<li>Assign workload to all executors</li>
+							<li>Decide when next epoch starts (about 15 minutes)<ul>
+									<li>Crawler and indexer work once per epoch, querier work per request</li>
+									<li>In evaluation seems like they crawl and index for 10 days, then query against it
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+					<li>Executor read epoch N - 1 data and write epoch N data <ul>
+							<li>If a shard is not updated in epoch N - 1 (e.g. because executor failure), read the most
+								recent version</li>
+						</ul>
+					</li>
+					<li>Kanban: key value store of all crawled and indexed data (234GB) and witness (37.68 + 6.25GB)<ul>
+							<li>Snapshot every epoch, consensus on masters</li>
+							<li>Verify witness and Kanban's data according to masters' agreement</li>
+						</ul>
+					</li>
+				</ul>
+			</section>
+			<section>
+				<div class="r-fit-text">Evaluation with 9 desktop</div>
+				<ul>
+					<li>133.8 requests/sec @ 21.71ms</li>
+					<li>Verifiable cost: 15.2% + 7.6% throughput decrease, 0.4% + 8ms latency</li>
+					<li>User privacy cost: 12.6x throughput decrease, 4.5-11.9x latency increase</li>
+					<li>Search four keywords @ 46.3ms</li>
+					<li>Untrusted version is 4.8x slower than ElasticSearch</li>
+					<li>Verify witness takes 15698s (and another 517s to download data), or 1.2s if delegated</li>
+				</ul>
+			</section>
+			<section>
+				<div class="r-fit-text">Evaluation with 16 replicas of 82 shards</div>
+				<ul>
+					<li>1484 requests/sec</li>
+					<li>When 7.7% queriers fail, throughput drop 35.4%</li>
+					<li>When 33.7% queriers fail, throughput drop 64.8%</li>
+				</ul>
+			</section>
 		</div>
+	</div>
 
-		<script src="dist/reveal.js"></script>
-		<script src="plugin/notes/notes.js"></script>
-		<script src="plugin/markdown/markdown.js"></script>
-		<script src="plugin/highlight/highlight.js"></script>
-		<script>
-			// More info about initialization & config:
-			// - https://revealjs.com/initialization/
-			// - https://revealjs.com/config/
-			Reveal.initialize({
-				hash: true,
+	<script src="dist/reveal.js"></script>
+	<script src="plugin/notes/notes.js"></script>
+	<script src="plugin/markdown/markdown.js"></script>
+	<script src="plugin/highlight/highlight.js"></script>
+	<script src="plugin/math/math.js"></script>
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
 
-				// Learn about plugins: https://revealjs.com/plugins/
-				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
-			});
-		</script>
-	</body>
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMath.MathJax3]
+		});
+	</script>
+</body>
+
 </html>
